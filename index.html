@@ -9,61 +9,32 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Arial', sans-serif;
             color: white;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overflow: hidden;
+            padding: 15px;
+            position: relative;
+            overflow-x: hidden;
             background: #000;
-            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        /* VIDEO CONTAINER - PASTI TERLIHAT */
-        .video-container {
+        /* Video YouTube background */
+        #youtubeBackground {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
             z-index: -2;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* VIDEO ELEMENT - BUKAN IFRAME */
-        #backgroundVideo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.4;
-            filter: brightness(0.6);
-        }
-        
-        /* Video placeholder sebelum dimuat */
-        .video-placeholder {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1.2rem;
-            z-index: 1;
+            pointer-events: none;
         }
         
         /* Overlay untuk baca teks */
@@ -73,30 +44,32 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
             z-index: -1;
         }
         
         /* Konten */
-        .content {
-            max-width: 90vw;
+        .container {
             width: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            padding: 25px;
-            border-radius: 20px;
+            max-width: 95vw;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 25px 20px;
+            border-radius: 12px;
             text-align: center;
             line-height: 1.6;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
             margin-bottom: 20px;
-            z-index: 10;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
         }
         
         .message p {
             margin-bottom: 20px;
             font-size: 1.1rem;
-            line-height: 1.5;
+            text-align: justify;
+            hyphens: auto;
         }
         
         .signature {
@@ -106,178 +79,170 @@
             margin-top: 25px;
             padding-top: 15px;
             border-top: 1px solid rgba(255, 64, 129, 0.3);
+            text-align: center;
         }
         
-        /* TOMBOL UTAMA - BESAR UNTUK MOBILE */
-        .main-button {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #ff4081, #ff80ab);
+        /* Tombol utama */
+        .play-button {
+            background: linear-gradient(45deg, #ff4081, #ff80ab);
             color: white;
             border: none;
-            padding: 22px 35px;
-            font-size: 1.3rem;
-            font-weight: bold;
+            padding: 16px 30px;
+            font-size: 1.1rem;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 10px 35px rgba(255, 64, 129, 0.6);
-            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4);
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
+            animation: pulse 2s infinite;
             width: 90%;
-            max-width: 400px;
-            z-index: 100;
-            touch-action: manipulation;
+            max-width: 350px;
+            margin: 0 auto;
+            -webkit-tap-highlight-color: rgba(255, 64, 129, 0.5);
         }
         
-        .main-button:active {
-            transform: translateX(-50%) scale(0.96);
-            box-shadow: 0 5px 20px rgba(255, 64, 129, 0.4);
+        .play-button:hover,
+        .play-button:active {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(255, 64, 129, 0.6);
         }
         
-        .main-button.playing {
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+        .play-button.playing {
+            background: linear-gradient(45deg, #4CAF50, #2E7D32);
             animation: none;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
         }
         
-        .main-button:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
         }
         
-        .button-icon {
-            font-size: 1.8rem;
+        .button-text {
+            font-weight: bold;
+            font-size: 1rem;
         }
         
-        /* Progress bar untuk video */
-        .video-progress {
-            position: fixed;
-            bottom: 100px;
-            left: 5%;
-            width: 90%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            overflow: hidden;
-            z-index: 50;
-            display: none;
-        }
-        
-        .video-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #ff4081, #ff80ab);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        /* Volume control */
-        .volume-control {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 20px;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            display: none;
-        }
-        
-        .volume-slider {
-            width: 80px;
-            -webkit-appearance: none;
-            height: 4px;
-            border-radius: 2px;
-            background: rgba(255, 255, 255, 0.3);
-            outline: none;
-        }
-        
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #ff4081;
-            cursor: pointer;
-        }
-        
-        /* Responsif */
+        /* Responsif untuk layar kecil */
         @media (max-width: 480px) {
-            .content {
+            .container {
                 padding: 20px 15px;
-                margin-bottom: 15px;
-                max-height: 60vh;
-                overflow-y: auto;
+                margin: 10px 0 15px 0;
             }
             
             .message p {
                 font-size: 1rem;
                 margin-bottom: 15px;
+                line-height: 1.5;
             }
             
-            .main-button {
-                padding: 20px;
-                font-size: 1.2rem;
-                bottom: 20px;
+            .signature {
+                font-size: 1.1rem;
+                margin-top: 20px;
+                padding-top: 15px;
             }
             
-            #backgroundVideo {
-                opacity: 0.3;
+            .play-button {
+                padding: 14px 25px;
+                font-size: 1rem;
+                width: 95%;
+            }
+            
+            .button-text {
+                font-size: 0.95rem;
             }
         }
         
-        /* Animasi untuk konten */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Untuk layar sangat kecil (iPhone SE dll) */
+        @media (max-width: 320px) {
+            .message p {
+                font-size: 0.95rem;
+            }
+            
+            .play-button {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+            
+            .button-text {
+                font-size: 0.9rem;
+            }
         }
         
-        .content {
-            animation: fadeIn 0.8s ease-out;
+        /* Orientasi landscape */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+                justify-content: flex-start;
+            }
+            
+            .container {
+                margin-top: 10px;
+                padding: 15px;
+                max-width: 90vw;
+            }
+            
+            .play-button {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
         }
         
-        .main-button {
-            animation: fadeIn 1s ease-out 0.3s both;
+        /* Loading indicator */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 100;
+            font-size: 1rem;
+        }
+        
+        /* Notifikasi */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 64, 129, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 100;
+            font-size: 0.9rem;
+            display: none;
+            max-width: 90vw;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
 <body>
-    <!-- VIDEO BACKGROUND - VIDEO FILE LANGSUNG -->
-    <div class="video-container">
-        <video id="backgroundVideo" autoplay muted loop playsinline>
-            <!-- VIDEO LANGSUNG DARI SUMBER - BUKAN YOUTUBE IFRAME -->
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-romantic-music-on-a-piano-5105-large.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <div class="video-placeholder" id="videoPlaceholder">
-            <div style="font-size: 3rem; margin-bottom: 10px;">🎵</div>
-            Video musik akan dimulai...
-        </div>
+    <!-- Loading indicator -->
+    <div class="loading" id="loadingIndicator">Memuat video...</div>
+    
+    <!-- Notifikasi -->
+    <div class="notification" id="notification"></div>
+    
+    <!-- Video YouTube -->
+    <div id="youtubeBackground">
+        <!-- Akan diisi JavaScript -->
     </div>
     
     <!-- Overlay gelap -->
     <div class="overlay"></div>
     
-    <!-- Progress bar -->
-    <div class="video-progress" id="videoProgress">
-        <div class="video-progress-bar" id="progressBar"></div>
-    </div>
-    
-    <!-- Volume control -->
-    <div class="volume-control" id="volumeControl">
-        <span style="font-size: 1.2rem;">🔊</span>
-        <input type="range" min="0" max="100" value="70" class="volume-slider" id="volumeSlider">
-    </div>
-    
     <!-- Pesan -->
-    <div class="content">
+    <div class="container">
         <div class="message">
             <p>Sayang, aku tahu UAS bikin kamu cemas, tapi aku percaya kamu jauh lebih kuat dari yang kamu pikirkan. Kamu sudah belajar, kamu sudah berusaha, dan itu sudah cukup untuk membuatmu melangkah dengan tenang.</p>
             <p>Nggak apa-apa kalau kamu merasa belum siap, yang penting kamu mau maju pelan-pelan. Kamu nggak sendirian. Kamu pasti bisa, cintaku. ❤️</p>
@@ -285,230 +250,211 @@
         </div>
     </div>
     
-    <!-- TOMBOL UTAMA -->
-    <button class="main-button" id="playButton">
-        <span class="button-icon">▶️</span>
-        <span>TAP DISINI UNTUK MUSIK</span>
+    <!-- SATU TOMBOL SAJA -->
+    <button class="play-button" id="startButton">
+        <span style="font-size: 1.3rem;">▶️</span>
+        <span class="button-text">PUTAR MUSIK & VIDEO</span>
     </button>
 
     <script>
-        // ELEMENTS
-        const video = document.getElementById('backgroundVideo');
-        const playButton = document.getElementById('playButton');
-        const videoPlaceholder = document.getElementById('videoPlaceholder');
-        const volumeControl = document.getElementById('volumeControl');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const videoProgress = document.getElementById('videoProgress');
-        const progressBar = document.getElementById('progressBar');
-        
-        // STATE
+        // VIDEO YANG DIMINTA: https://www.youtube.com/watch?v=HEAn4FqXFY4
+        const videoId = 'HEAn4FqXFY4';
+        let player;
         let isPlaying = false;
-        let hasUserInteracted = false;
         
-        // INISIALISASI
-        function init() {
-            console.log("Inisialisasi aplikasi...");
-            
-            // Video sudah autoplay (muted) saat halaman dimuat
-            video.play().then(() => {
-                console.log("Video muted autoplay berhasil");
-                videoPlaceholder.style.display = 'none';
-            }).catch(error => {
-                console.log("Video autoplay gagal:", error);
-            });
-            
-            // Setup volume
-            video.volume = 0.7;
-            volumeSlider.value = 70;
-            
-            // Setup progress bar update
-            video.addEventListener('timeupdate', updateProgressBar);
-            
-            // Setup volume control
-            volumeSlider.addEventListener('input', function() {
-                video.volume = this.value / 100;
-            });
-            
-            // Setup tombol utama (TOUCH FRIENDLY)
-            setupButton();
-            
-            // Tampilkan video progress bar
-            videoProgress.style.display = 'block';
-            
-            // Auto-hide placeholder setelah 3 detik
+        // Tampilkan loading
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const notification = document.getElementById('notification');
+        
+        function showNotification(message, duration = 3000) {
+            notification.textContent = message;
+            notification.style.display = 'block';
             setTimeout(() => {
-                videoPlaceholder.style.opacity = '0';
-                setTimeout(() => {
-                    videoPlaceholder.style.display = 'none';
-                }, 500);
-            }, 3000);
+                notification.style.display = 'none';
+            }, duration);
         }
         
-        // SETUP TOMBOL
-        function setupButton() {
-            // Touch events untuk mobile
-            playButton.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                this.style.transform = 'translateX(-50%) scale(0.96)';
-            }, { passive: false });
+        document.addEventListener('DOMContentLoaded', function() {
+            const startButton = document.getElementById('startButton');
+            const youtubeDiv = document.getElementById('youtubeBackground');
             
-            playButton.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                this.style.transform = 'translateX(-50%) scale(1)';
-                handlePlayButton();
-            }, { passive: false });
+            // Load YouTube IFrame API
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
             
-            // Click event untuk desktop
-            playButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                handlePlayButton();
-            });
-        }
-        
-        // HANDLE TOMBOL PLAY
-        function handlePlayButton() {
-            if (!hasUserInteracted) {
-                // INTERAKSI PERTAMA: Aktifkan suara
-                activateSound();
-                hasUserInteracted = true;
-            } else {
-                // INTERAKSI BERIKUTNYA: Play/Pause
-                togglePlayPause();
-            }
-        }
-        
-        // AKTIFKAN SUARA
-        function activateSound() {
-            console.log("Mengaktifkan suara...");
-            
-            // Update tombol
-            playButton.innerHTML = '<span class="button-icon">🔊</span><span>MENGATUR SUARA...</span>';
-            playButton.disabled = true;
-            
-            // Unmute video
-            video.muted = false;
-            
-            // Coba play dengan suara
-            video.play().then(() => {
-                console.log("Video dengan suara berhasil diputar!");
+            // Fungsi ketika YouTube API siap
+            window.onYouTubeIframeAPIReady = function() {
+                loadingIndicator.style.display = 'block';
                 
-                // Tampilkan volume control
-                volumeControl.style.display = 'flex';
-                
-                // Update tombol menjadi pause
-                playButton.innerHTML = '<span class="button-icon">⏸️</span><span>JEDA MUSIK</span>';
-                playButton.classList.add('playing');
-                playButton.disabled = false;
-                isPlaying = true;
-                
-            }).catch(error => {
-                console.log("Gagal play dengan suara:", error);
-                
-                // Fallback: Mute dulu, play, lalu unmute
-                video.muted = true;
-                video.play().then(() => {
-                    setTimeout(() => {
-                        video.muted = false;
-                        console.log("Suara diaktifkan via fallback");
-                        
-                        volumeControl.style.display = 'flex';
-                        playButton.innerHTML = '<span class="button-icon">⏸️</span><span>JEDA MUSIK</span>';
-                        playButton.classList.add('playing');
-                        playButton.disabled = false;
-                        isPlaying = true;
-                    }, 300);
+                player = new YT.Player('youtubeBackground', {
+                    height: '100%',
+                    width: '100%',
+                    videoId: videoId,
+                    playerVars: {
+                        'autoplay': 0, // Tidak autoplay dulu
+                        'mute': 1, // Mute di awal
+                        'loop': 1,
+                        'playlist': videoId,
+                        'controls': 0,
+                        'showinfo': 0,
+                        'modestbranding': 1,
+                        'rel': 0,
+                        'playsinline': 1 // Untuk iOS
+                    },
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange,
+                        'onError': onPlayerError
+                    }
                 });
-            });
-        }
-        
-        // TOGGLE PLAY/PAUSE
-        function togglePlayPause() {
-            if (isPlaying) {
-                // PAUSE
-                video.pause();
-                playButton.innerHTML = '<span class="button-icon">▶️</span><span>MAINKAN MUSIK</span>';
-                playButton.classList.remove('playing');
-                isPlaying = false;
-            } else {
-                // PLAY
-                video.play().then(() => {
-                    playButton.innerHTML = '<span class="button-icon">⏸️</span><span>JEDA MUSIK</span>';
-                    playButton.classList.add('playing');
+            };
+            
+            function onPlayerReady(event) {
+                console.log("YouTube Player siap");
+                loadingIndicator.style.display = 'none';
+                showNotification("Video siap diputar! 🎵", 2000);
+            }
+            
+            function onPlayerStateChange(event) {
+                if (event.data === YT.PlayerState.PLAYING) {
+                    console.log("Video sedang diputar");
                     isPlaying = true;
+                    updateButton();
+                } else if (event.data === YT.PlayerState.PAUSED) {
+                    console.log("Video dijeda");
+                    isPlaying = false;
+                    updateButton();
+                }
+            }
+            
+            function onPlayerError(event) {
+                console.error("Error YouTube player:", event.data);
+                loadingIndicator.style.display = 'none';
+                showNotification("Gagal memuat video, coba lagi", 3000);
+                
+                // Fallback ke iframe biasa
+                setupFallback();
+            }
+            
+            // Fungsi untuk mulai mainkan video dengan suara
+            function startVideoWithSound() {
+                if (!player) return;
+                
+                console.log("Memulai video dengan suara...");
+                loadingIndicator.style.display = 'block';
+                loadingIndicator.textContent = "Memulai musik...";
+                
+                try {
+                    // 1. Unmute video
+                    player.unMute();
+                    
+                    // 2. Set volume ke 100%
+                    player.setVolume(100);
+                    
+                    // 3. Play video
+                    player.playVideo();
+                    
+                    // 4. Update tombol
+                    startButton.innerHTML = '<span style="font-size: 1.3rem;">🔊</span><span class="button-text">MUSIK SEDANG BERMAIN</span>';
+                    startButton.classList.add('playing');
+                    startButton.disabled = true;
+                    
+                    // 5. Otomatis enable tombol lagi setelah 2 detik
+                    setTimeout(() => {
+                        startButton.disabled = false;
+                        loadingIndicator.style.display = 'none';
+                        showNotification("Musik dimulai! 🎶", 2000);
+                    }, 2000);
+                    
+                    console.log("Video diputar dengan suara!");
+                } catch (error) {
+                    console.error("Error saat memutar video:", error);
+                    loadingIndicator.style.display = 'none';
+                    showNotification("Gagal memutar video", 3000);
+                    startButton.disabled = false;
+                }
+            }
+            
+            // Fungsi update tombol
+            function updateButton() {
+                if (isPlaying) {
+                    startButton.innerHTML = '<span style="font-size: 1.3rem;">⏸️</span><span class="button-text">JEDA MUSIK</span>';
+                    startButton.classList.add('playing');
+                } else {
+                    startButton.innerHTML = '<span style="font-size: 1.3rem;">▶️</span><span class="button-text">PUTAR MUSIK & VIDEO</span>';
+                    startButton.classList.remove('playing');
+                }
+            }
+            
+            // Event listener untuk tombol
+            startButton.addEventListener('click', function() {
+                if (!player) {
+                    console.log("Player belum siap, mencoba lagi...");
+                    showNotification("Tunggu sebentar...", 2000);
+                    return;
+                }
+                
+                if (!isPlaying) {
+                    startVideoWithSound();
+                } else {
+                    // Jika sudah playing, pause video
+                    player.pauseVideo();
+                    isPlaying = false;
+                    updateButton();
+                    showNotification("Musik dijeda ⏸️", 2000);
+                }
+            });
+            
+            // Fallback jika YouTube API gagal
+            function setupFallback() {
+                console.log("Menggunakan fallback iframe biasa");
+                
+                // Buat iframe biasa
+                const iframe = document.createElement('iframe');
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=0&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1`;
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                iframe.style.border = 'none';
+                iframe.allow = 'autoplay; encrypted-media; accelerometer; gyroscope; picture-in-picture';
+                iframe.allowFullscreen = true;
+                
+                youtubeDiv.appendChild(iframe);
+                
+                // Update fungsi tombol untuk iframe biasa
+                startButton.addEventListener('click', function() {
+                    if (!isPlaying) {
+                        showNotification("Klik tombol play di video YouTube", 3000);
+                        isPlaying = true;
+                        startButton.innerHTML = '<span style="font-size: 1.3rem;">🔊</span><span class="button-text">MUSIK SEDANG BERMAIN</span>';
+                        startButton.classList.add('playing');
+                    }
                 });
             }
-        }
-        
-        // UPDATE PROGRESS BAR
-        function updateProgressBar() {
-            if (video.duration) {
-                const progress = (video.currentTime / video.duration) * 100;
-                progressBar.style.width = progress + '%';
-            }
-        }
-        
-        // LOAD VIDEO YOUTUBE ALTERNATIF (jika video lokal gagal)
-        function loadYouTubeAlternative() {
-            console.log("Mencoba video alternatif...");
             
-            // Ganti dengan video dari sumber lain
-            video.src = 'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-water-1164-large.mp4';
-            video.load();
-            video.play().catch(console.error);
-        }
-        
-        // DETEKSI KONEKSI LAMBAT
-        video.addEventListener('error', function(e) {
-            console.log("Error video:", e);
-            videoPlaceholder.innerHTML = '<div style="font-size: 3rem; margin-bottom: 10px;">⚠️</div><div>Video tidak dapat dimuat<br><small>Memuat alternatif...</small></div>';
-            
-            setTimeout(loadYouTubeAlternative, 2000);
-        });
-        
-        // VIDEO LOADED
-        video.addEventListener('loadeddata', function() {
-            console.log("Video berhasil dimuat");
-            videoPlaceholder.style.opacity = '0';
+            // Fallback setelah 5 detik
             setTimeout(() => {
-                videoPlaceholder.style.display = 'none';
-            }, 500);
-        });
-        
-        // JALANKAN SAAT HALAMAN SIAP
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
-        
-        // HANDLE PAGE VISIBILITY (pause saat tab tidak aktif)
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden && isPlaying) {
-                video.pause();
-                playButton.innerHTML = '<span class="button-icon">▶️</span><span>MAINKAN MUSIK</span>';
-                playButton.classList.remove('playing');
-                isPlaying = false;
+                if (!player) {
+                    setupFallback();
+                    loadingIndicator.style.display = 'none';
+                }
+            }, 5000);
+            
+            // Mencegah zoom pada tombol di iOS
+            document.addEventListener('touchstart', function(event) {
+                if (event.target === startButton) {
+                    event.preventDefault();
+                }
+            }, { passive: false });
+            
+            // Deteksi jika perangkat iOS
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (isIOS) {
+                // Tambahkan pesan khusus untuk iOS
+                showNotification("Di iOS, putar video mungkin memerlukan interaksi langsung", 4000);
             }
         });
-        
-        // PREVENT DEFAULT BEHAVIOR DI MOBILE
-        document.addEventListener('touchmove', function(e) {
-            if (e.scale !== 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-        
-        // FULLSCREEN SUPPORT
-        video.addEventListener('click', function() {
-            if (video.requestFullscreen) {
-                video.requestFullscreen();
-            } else if (video.webkitRequestFullscreen) {
-                video.webkitRequestFullscreen();
-            } else if (video.mozRequestFullScreen) {
-                video.mozRequestFullScreen();
-            }
-        });
-        
     </script>
 </body>
 </html>
