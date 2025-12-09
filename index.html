@@ -1,1 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesan Sayang dari Febri</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Video background - PAKAI IFRAME TAPI TRICK */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2; /* Sangat transparan */
+        }
+        
+        .video-background iframe {
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transform: scale(1.1); /* Zoom in sedikit */
+        }
+        
+        /* Audio player hidden */
+        .audio-player {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0.001;
+            pointer-events: none;
+        }
+        
+        /* Konten utama */
+        .container {
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .message p {
+            margin-bottom: 30px;
+            font-size: 1.3rem;
+            color: #444;
+        }
+        
+        .signature {
+            color: #e91e63;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        /* Responsif */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .message p {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- TRICK: Dua elemen video/audio -->
+    
+    <!-- 1. Video YouTube Muted untuk autoplay -->
+    <div class="video-background">
+        <iframe 
+            src="https://www.youtube.com/embed/HEAn4FqXFY4?autoplay=1&mute=1&loop=1&playlist=HEAn4FqXFY4&controls=0&showinfo=0&modestbranding=1&rel=0&enablejsapi=1" 
+            allow="autoplay; encrypted-media" 
+            allowfullscreen
+            id="youtubeVideo">
+        </iframe>
+    </div>
+    
+    <!-- 2. Audio terpisah dari sumber lain -->
+    <audio class="audio-player" id="bgMusic" autoplay loop>
+        <!-- MUSIK LAGU YANG SAMA DENGAN VIDEO (tapi dari sumber audio saja) -->
+        <!-- Contoh: lagu piano yang mirip -->
+        <source src="https://assets.codepen.io/1468070/relaxing-piano.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Konten pesan -->
+    <div class="container">
+        <div class="message">
+            <p>Sayang, aku tahu UAS bikin kamu cemas, tapi aku percaya kamu jauh lebih kuat dari yang kamu pikirkan. Kamu sudah belajar, kamu sudah berusaha, dan itu sudah cukup untuk membuatmu melangkah dengan tenang.</p>
+            <p>Nggak apa-apa kalau kamu merasa belum siap, yang penting kamu mau maju pelan-pelan. Kamu nggak sendirian. Kamu pasti bisa, cintaku. <span style="color:#e91e63;font-size:1.5rem;">🤍✨</span></p>
+            <p class="signature">With love - Febri</p>
+        </div>
+    </div>
 
+    <script>
+        // TRICK: Video muted autoplay + Audio terpisah
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgMusic = document.getElementById('bgMusic');
+            
+            // Set volume
+            bgMusic.volume = 0.6;
+            
+            // Autoplay audio dengan trik
+            // Simulate user interaction secara otomatis
+            function simulateClick() {
+                const clickEvent = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true
+                });
+                
+                document.dispatchEvent(clickEvent);
+                console.log("Simulasi klik untuk audio");
+            }
+            
+            // Coba play audio langsung
+            bgMusic.play().then(() => {
+                console.log("Audio berhasil autoplay!");
+            }).catch(error => {
+                console.log("Audio autoplay diblokir, coba trik...");
+                
+                // Trik 1: Delay lalu coba lagi
+                setTimeout(() => {
+                    bgMusic.play().catch(e => {
+                        console.log("Masih gagal, coba trik lain...");
+                        
+                        // Trik 2: Mute dulu, play, lalu unmute
+                        bgMusic.muted = true;
+                        bgMusic.play().then(() => {
+                            setTimeout(() => {
+                                bgMusic.muted = false;
+                                console.log("Audio aktif via trick!");
+                            }, 100);
+                        });
+                    });
+                }, 1000);
+                
+                // Trik 3: Simulasi interaksi
+                setTimeout(simulateClick, 500);
+            });
+            
+            // Video sudah autoplay (muted) - tidak ada error
+            console.log("Video YouTube muted autoplay aktif");
+            
+            // Play audio saat user scroll (event yang diizinkan)
+            window.addEventListener('scroll', function() {
+                if (bgMusic.paused) {
+                    bgMusic.play().then(() => {
+                        console.log("Audio diputar setelah scroll");
+                    });
+                }
+            }, { once: true }); // Hanya sekali
+            
+            // Play audio saat mouse move
+            document.addEventListener('mousemove', function initAudio() {
+                if (bgMusic.paused) {
+                    bgMusic.play().then(() => {
+                        console.log("Audio diputar setelah mouse move");
+                    });
+                }
+                // Hapus event setelah berhasil
+                document.removeEventListener('mousemove', initAudio);
+            });
+            
+            // Pastikan audio tetap play
+            setInterval(() => {
+                if (bgMusic.paused) {
+                    bgMusic.play().catch(e => {});
+                }
+            }, 3000);
+            
+            console.log("Sistem siap: Video muted + Audio terpisah");
+        });
+    </script>
+</body>
+</html>
