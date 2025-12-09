@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#000000">
-    <meta name="description" content="febri">
-    <title>Febri / Bila</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesan Sayang dari Febri</title>
     <style>
         * {
             margin: 0;
@@ -14,400 +12,190 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
             overflow-x: hidden;
-            color: white;
-            background: #000;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #f0f0f0;
         }
         
-        #video-container {
+        /* Video background - transparan */
+        .video-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -2;
+            z-index: -1;
+            opacity: 0.25; /* Lebih transparan */
         }
         
-        #video-background {
+        .video-background iframe {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            opacity: 0.3;
             pointer-events: none;
         }
         
-        #root {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .content {
+        /* Konten utama */
+        .container {
             max-width: 800px;
-            padding: 60px 40px;
-            background: rgba(0, 0, 0, 0.85);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-        
-        h1 {
-            font-size: 4rem;
-            margin-bottom: 30px;
-            background: linear-gradient(45deg, #ff4081, #2196f3);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        
-        h1 span {
-            display: block;
-            font-size: 1.8rem;
-            margin-top: 10px;
-            font-weight: 300;
-            letter-spacing: 5px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .intro-text {
-            font-size: 1.4rem;
-            line-height: 1.8;
-            margin-bottom: 40px;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 300;
-        }
-        
-        .highlight {
-            background: linear-gradient(45deg, #ff4081, #2196f3);
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: 500;
-        }
-        
-        .music-controls {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(15, 15, 15, 0.95);
-            padding: 20px;
-            border-radius: 12px;
-            z-index: 100;
-            width: 280px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .control-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .control-header h3 {
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .control-button {
-            flex: 1;
-            padding: 12px 0;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .control-button:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-1px);
-        }
-        
-        .control-button.active {
-            background: linear-gradient(45deg, #ff4081, #2196f3);
-        }
-        
-        .control-group {
-            margin-bottom: 20px;
-        }
-        
-        .control-label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .slider-container {
-            position: relative;
-        }
-        
-        .slider {
-            width: 100%;
-            height: 4px;
-            -webkit-appearance: none;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            outline: none;
-        }
-        
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #ff4081, #2196f3);
-            cursor: pointer;
-            border: 3px solid rgba(15, 15, 15, 0.95);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }
-        
-        .slider-value {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: white;
-        }
-        
-        .footer-note {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.4);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             text-align: center;
+            line-height: 1.8;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
+        .message p {
+            margin-bottom: 30px;
+            font-size: 1.3rem;
+            color: #444;
+        }
+        
+        .signature {
+            color: #e91e63;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        /* Responsif */
         @media (max-width: 768px) {
-            .music-controls {
-                bottom: 20px;
-                right: 20px;
-                left: 20px;
-                width: auto;
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 2.5rem;
-            }
-            
-            .content {
+            .container {
                 padding: 30px 20px;
-                margin: 15px;
+                margin: 20px;
             }
             
-            .intro-text {
+            .message p {
                 font-size: 1.1rem;
             }
         }
         
-        @media (max-width: 480px) {
-            .music-controls {
-                bottom: 10px;
-                right: 10px;
-                left: 10px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            h1 span {
-                font-size: 1.2rem;
-                letter-spacing: 3px;
-            }
-        }
-        
-        /* Animation for smooth transitions */
-        .content, .music-controls {
-            animation: fadeIn 0.8s ease-out;
+        /* Animasi */
+        .container {
+            animation: fadeIn 1.5s ease-out;
         }
         
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95); 
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
             }
+        }
+        
+        .heart {
+            color: #e91e63;
+            font-size: 1.8rem;
+            margin: 0 5px;
+            animation: heartbeat 1.5s infinite;
+            display: inline-block;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
-    <!-- Video Background Container -->
-    <div id="video-container">
+    <!-- Video YouTube AUTOPLAY di background -->
+    <div class="video-background">
         <iframe 
-            id="video-background"
-            src="https://www.youtube.com/embed/HEAn4FqXFY4?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=HEAn4FqXFY4&enablejsapi=1"
-            frameborder="0"
-            allow="autoplay; encrypted-media"
+            src="https://www.youtube.com/embed/HEAn4FqXFY4?autoplay=1&mute=1&loop=1&playlist=HEAn4FqXFY4&controls=0&showinfo=0&modestbranding=1&rel=0&enablejsapi=1" 
+            allow="autoplay; encrypted-media; accelerometer; gyroscope" 
             allowfullscreen>
         </iframe>
     </div>
     
-    <!-- Main Content -->
-    <div id="root">
-        <div class="content">
-            <h1>Febri <span>/ Bila</span></h1>
-            <p class="intro-text">
-                Music playing in the background with transparent video overlay.<br>
-                Adjust settings using the controls to customize your experience.
-            </p>
-            <p class="intro-text">
-                Current track: <span class="highlight">HEAn4FqXFY4</span>
-            </p>
+    <!-- Konten pesan -->
+    <div class="container">
+        <div class="message">
+            <p>Sayang, aku tahu UAS bikin kamu cemas, tapi aku percaya kamu jauh lebih kuat dari yang kamu pikirkan. Kamu sudah belajar, kamu sudah berusaha, dan itu sudah cukup untuk membuatmu melangkah dengan tenang.</p>
+            <p>Nggak apa-apa kalau kamu merasa belum siap, yang penting kamu mau maju pelan-pelan. Kamu nggak sendirian. Kamu pasti bisa, cintaku. <span class="heart">🤍</span><span class="heart">✨</span></p>
+            <p class="signature">With love - Febri</p>
         </div>
     </div>
     
-    <!-- Music Controls -->
-    <div class="music-controls">
-        <div class="control-header">
-            <div style="width: 24px; height: 24px; background: linear-gradient(45deg, #ff4081, #2196f3); border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <span style="color: white; font-size: 14px;">♪</span>
-            </div>
-            <h3>Audio Controls</h3>
-        </div>
-        
-        <div class="button-group">
-            <button class="control-button active" id="play-btn">
-                <span style="font-size: 16px;">⏸️</span>
-                <span>Pause</span>
-            </button>
-            <button class="control-button" id="mute-btn">
-                <span style="font-size: 16px;">🔇</span>
-                <span>Mute</span>
-            </button>
-        </div>
-        
-        <div class="control-group">
-            <div class="control-label">
-                <span>Volume</span>
-                <span class="slider-value" id="volume-value">50%</span>
-            </div>
-            <div class="slider-container">
-                <input type="range" class="slider" id="volume-slider" min="0" max="100" value="50">
-            </div>
-        </div>
-        
-        <div class="control-group">
-            <div class="control-label">
-                <span>Video Opacity</span>
-                <span class="slider-value" id="opacity-value">30%</span>
-            </div>
-            <div class="slider-container">
-                <input type="range" class="slider" id="opacity-slider" min="0" max="100" value="30">
-            </div>
-        </div>
-    </div>
+    <!-- Musik background AUTOPLAY -->
+    <audio id="bgMusic" autoplay loop>
+        <!-- Ganti URL ini dengan musik yang Anda inginkan -->
+        <source src="https://assets.codepen.io/1468070/relaxing-piano.mp3" type="audio/mpeg">
+        <source src="https://assets.codepen.io/1468070/relaxing-piano.ogg" type="audio/ogg">
+    </audio>
 
-    <!-- YouTube API Script -->
-    <script src="https://www.youtube.com/iframe_api"></script>
-    
-    <!-- Custom Script for Video Controls -->
     <script>
-        let player;
-        let isPlaying = true;
-        let isMuted = true;
-        
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('video-background', {
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
+        // Script untuk memastikan autoplay bekerja
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup video autoplay
+            const videoIframe = document.querySelector('iframe');
+            
+            // Setup musik autoplay dengan strategi yang lebih baik
+            const bgMusic = document.getElementById('bgMusic');
+            bgMusic.volume = 0.4; // Volume sedang
+            
+            // Coba putar musik segera
+            const playMusic = () => {
+                bgMusic.play().then(() => {
+                    console.log("Musik berhasil diputar");
+                }).catch(error => {
+                    console.log("Autoplay diblokir, akan dicoba setelah interaksi pengguna");
+                    
+                    // Coba lagi setelah user berinteraksi dengan halaman
+                    const playAfterInteraction = () => {
+                        bgMusic.play().then(() => {
+                            console.log("Musik diputar setelah interaksi");
+                            // Hapus event listeners setelah berhasil
+                            document.removeEventListener('click', playAfterInteraction);
+                            document.removeEventListener('touchstart', playAfterInteraction);
+                        }).catch(e => {
+                            console.log("Masih gagal memutar musik");
+                        });
+                    };
+                    
+                    // Tambah event listeners untuk interaksi user
+                    document.addEventListener('click', playAfterInteraction);
+                    document.addEventListener('touchstart', playAfterInteraction);
+                });
+            };
+            
+            // Delay sedikit untuk meningkatkan chance autoplay
+            setTimeout(playMusic, 500);
+            
+            // Fallback: coba play jika page visible
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    bgMusic.play().catch(e => console.log("Gagal resume musik"));
                 }
             });
-        }
-        
-        function onPlayerReady(event) {
-            event.target.setVolume(50);
-            event.target.unMute();
-            isMuted = false;
-            updateMuteButton();
-        }
-        
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.PLAYING) {
-                isPlaying = true;
-                document.getElementById('play-btn').classList.add('active');
-                document.getElementById('play-btn').innerHTML = '<span style="font-size: 16px;">⏸️</span><span>Pause</span>';
-            } else if (event.data === YT.PlayerState.PAUSED) {
-                isPlaying = false;
-                document.getElementById('play-btn').classList.remove('active');
-                document.getElementById('play-btn').innerHTML = '<span style="font-size: 16px;">▶️</span><span>Play</span>';
-            }
-        }
-        
-        document.getElementById('play-btn').addEventListener('click', function() {
-            if (player) {
-                if (isPlaying) {
-                    player.pauseVideo();
-                } else {
-                    player.playVideo();
-                }
-            }
-        });
-        
-        document.getElementById('mute-btn').addEventListener('click', function() {
-            if (player) {
-                if (isMuted) {
-                    player.unMute();
-                    isMuted = false;
-                    this.classList.remove('active');
-                    this.innerHTML = '<span style="font-size: 16px;">🔇</span><span>Mute</span>';
-                } else {
-                    player.mute();
-                    isMuted = true;
-                    this.classList.add('active');
-                    this.innerHTML = '<span style="font-size: 16px;">🔊</span><span>Unmute</span>';
-                }
-            }
-        });
-        
-        document.getElementById('volume-slider').addEventListener('input', function() {
-            const volume = this.value;
-            document.getElementById('volume-value').textContent = volume + '%';
             
-            if (player) {
-                player.setVolume(volume);
-            }
+            // Pesan konsole
+            console.log("Halaman siap! Video dan musik autoplay diaktifkan.");
         });
         
-        document.getElementById('opacity-slider').addEventListener('input', function() {
-            const opacity = this.value / 100;
-            document.getElementById('opacity-value').textContent = this.value + '%';
-            document.getElementById('video-background').style.opacity = opacity;
+        // Script untuk memastikan video tetap diputar
+        window.addEventListener('load', function() {
+            const iframe = document.querySelector('iframe');
+            
+            // Refresh iframe jika video tidak diputar (fallback)
+            setTimeout(() => {
+                iframe.src = iframe.src; // Refresh iframe
+            }, 3000);
         });
     </script>
 </body>
- </html>
+</html>
