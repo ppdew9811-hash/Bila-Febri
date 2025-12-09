@@ -12,87 +12,167 @@
         }
         
         body {
-            font-family: Arial, sans-serif;
-            color: #333;
+            font-family: 'Arial', sans-serif;
+            color: white;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            background: #000;
             position: relative;
+            overflow: hidden;
+            background: black;
         }
         
-        /* Video background */
-        #videoBackground {
+        /* Video YouTube background */
+        #youtubeBackground {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.2;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
         }
         
-        /* Konten pesan */
+        /* Overlay untuk baca teks */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+        
+        /* Konten */
         .container {
             max-width: 700px;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(0, 0, 0, 0.8);
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             text-align: center;
+            line-height: 1.6;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         
         .message p {
             margin-bottom: 25px;
             font-size: 1.2rem;
-            line-height: 1.6;
         }
         
         .signature {
-            color: #e91e63;
+            color: #ff4081;
             font-weight: bold;
             font-size: 1.3rem;
-            margin-top: 20px;
+            margin-top: 30px;
             padding-top: 20px;
-            border-top: 2px solid #eee;
+            border-top: 1px solid rgba(255, 64, 129, 0.3);
+        }
+        
+        /* Instruksi kecil */
+        .instruction {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 64, 129, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            animation: fadeInOut 3s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <!-- Video YouTube langsung -->
-    <iframe 
-        id="videoBackground"
-        src="https://www.youtube.com/embed/HEAn4FqXFY4?autoplay=1&mute=0&loop=1&playlist=HEAn4FqXFY4&controls=0&showinfo=0"
-        frameborder="0"
-        allow="autoplay; encrypted-media">
-    </iframe>
+    <!-- Video YouTube -->
+    <div id="youtubeBackground">
+        <!-- Akan diisi JavaScript -->
+    </div>
     
-    <!-- Konten pesan -->
+    <!-- Overlay gelap -->
+    <div class="overlay"></div>
+    
+    <!-- Pesan -->
     <div class="container">
         <div class="message">
             <p>Sayang, aku tahu UAS bikin kamu cemas, tapi aku percaya kamu jauh lebih kuat dari yang kamu pikirkan. Kamu sudah belajar, kamu sudah berusaha, dan itu sudah cukup untuk membuatmu melangkah dengan tenang.</p>
-            <p>Nggak apa-apa kalau kamu merasa belum siap, yang penting kamu mau maju pelan-pelan. Kamu nggak sendirian. Kamu pasti bisa, cintaku. 🤍✨</p>
+            <p>Nggak apa-apa kalau kamu merasa belum siap, yang penting kamu mau maju pelan-pelan. Kamu nggak sendirian. Kamu pasti bisa, cintaku. ❤️</p>
             <p class="signature">With love - Febri</p>
         </div>
     </div>
+    
+    <!-- Instruksi kecil -->
+    <div class="instruction">
+        Klik di mana saja untuk mulai
+    </div>
 
     <script>
-        // Simple script - video langsung main
-        console.log("Video YouTube langsung dimainkan...");
+        // VIDEO YANG DIMINTA: https://www.youtube.com/watch?v=HEAn4FqXFY4
+        const videoId = 'HEAn4FqXFY4';
         
-        // Coba unmute setelah beberapa detik
-        setTimeout(() => {
-            try {
-                const iframe = document.getElementById('videoBackground');
-                // Kirim command unmute ke YouTube player
-                iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Buat iframe YouTube
+            const iframe = document.createElement('iframe');
+            iframe.id = 'youtubePlayer';
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&modestbranding=1&rel=0`;
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            iframe.allow = 'autoplay; encrypted-media';
+            iframe.allowFullscreen = true;
+            
+            // Tambahkan ke halaman
+            document.getElementById('youtubeBackground').appendChild(iframe);
+            
+            console.log("Video YouTube dimuat (muted autoplay)");
+            
+            // FUNGSI UNTUK UNMUTE DAN PLAY DENGAN SUARA
+            function playWithSound() {
                 console.log("Mencoba unmute video...");
-            } catch(e) {
-                console.log("Browser mungkin block suara otomatis");
+                
+                // Hapus instruksi
+                document.querySelector('.instruction').style.display = 'none';
+                
+                // Trick 1: Coba unmute via YouTube API
+                try {
+                    const player = document.getElementById('youtubePlayer');
+                    player.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                    player.contentWindow.postMessage('{"event":"command","func":"setVolume","args":[100]}', '*');
+                    console.log("Unmute command dikirim");
+                } catch(e) {
+                    console.log("Error unmute:", e);
+                }
+                
+                // Trick 2: Reload iframe tanpa muted
+                setTimeout(() => {
+                    const newIframe = document.createElement('iframe');
+                    newIframe.id = 'youtubePlayer';
+                    newIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&showinfo=0`;
+                    newIframe.style.cssText = iframe.style.cssText;
+                    newIframe.allow = iframe.allow;
+                    
+                    // Ganti iframe lama
+                    iframe.parentNode.replaceChild(newIframe, iframe);
+                    console.log("Iframe direload tanpa mute");
+                }, 500);
             }
-        }, 2000);
+            
+            // Saat user klik DI MANA SAJA, aktifkan suara
+            document.addEventListener('click', playWithSound);
+            document.addEventListener('touchstart', playWithSound);
+            
+            // Juga coba unmute otomatis setelah 2 detik (mungkin berhasil di beberapa browser)
+            setTimeout(playWithSound, 2000);
+        });
     </script>
 </body>
 </html>
