@@ -16,12 +16,13 @@
             color: white;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
             position: relative;
             overflow: hidden;
-            background: black;
+            background: #000;
         }
         
         /* Video YouTube background */
@@ -41,14 +42,14 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.6);
             z-index: -1;
         }
         
         /* Konten */
         .container {
             max-width: 700px;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.75);
             padding: 40px;
             border-radius: 15px;
             text-align: center;
@@ -56,6 +57,7 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
         }
         
         .message p {
@@ -72,23 +74,59 @@
             border-top: 1px solid rgba(255, 64, 129, 0.3);
         }
         
-        /* Instruksi kecil */
-        .instruction {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(255, 64, 129, 0.9);
+        /* Tombol utama */
+        .play-button {
+            background: linear-gradient(45deg, #ff4081, #ff80ab);
             color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            opacity: 0.9;
-            animation: fadeInOut 3s infinite;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 64, 129, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: pulse 2s infinite;
         }
         
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
+        .play-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 64, 129, 0.6);
+        }
+        
+        .play-button:active {
+            transform: translateY(-1px);
+        }
+        
+        .play-button.playing {
+            background: linear-gradient(45deg, #4CAF50, #2E7D32);
+            animation: none;
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .button-text {
+            font-weight: bold;
+        }
+        
+        /* Responsif */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .play-button {
+                padding: 16px 30px;
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -110,68 +148,159 @@
         </div>
     </div>
     
-    <!-- Instruksi kecil -->
-    <div class="instruction">
-        Klik di mana saja untuk mulai
-    </div>
+    <!-- SATU TOMBOL SAJA -->
+    <button class="play-button" id="startButton">
+        <span style="font-size: 1.5rem;">▶️</span>
+        <span class="button-text">PUTAR MUSIK & VIDEO</span>
+    </button>
 
     <script>
         // VIDEO YANG DIMINTA: https://www.youtube.com/watch?v=HEAn4FqXFY4
         const videoId = 'HEAn4FqXFY4';
+        let player;
+        let isPlaying = false;
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Buat iframe YouTube
-            const iframe = document.createElement('iframe');
-            iframe.id = 'youtubePlayer';
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&modestbranding=1&rel=0`;
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.border = 'none';
-            iframe.allow = 'autoplay; encrypted-media';
-            iframe.allowFullscreen = true;
+            const startButton = document.getElementById('startButton');
+            const youtubeDiv = document.getElementById('youtubeBackground');
             
-            // Tambahkan ke halaman
-            document.getElementById('youtubeBackground').appendChild(iframe);
+            // Load YouTube IFrame API
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
             
-            console.log("Video YouTube dimuat (muted autoplay)");
+            // Fungsi ketika YouTube API siap
+            window.onYouTubeIframeAPIReady = function() {
+                player = new YT.Player('youtubeBackground', {
+                    height: '100%',
+                    width: '100%',
+                    videoId: videoId,
+                    playerVars: {
+                        'autoplay': 0, // Tidak autoplay dulu
+                        'mute': 1, // Mute di awal
+                        'loop': 1,
+                        'playlist': videoId,
+                        'controls': 0,
+                        'showinfo': 0,
+                        'modestbranding': 1,
+                        'rel': 0
+                    },
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+            };
             
-            // FUNGSI UNTUK UNMUTE DAN PLAY DENGAN SUARA
-            function playWithSound() {
-                console.log("Mencoba unmute video...");
-                
-                // Hapus instruksi
-                document.querySelector('.instruction').style.display = 'none';
-                
-                // Trick 1: Coba unmute via YouTube API
-                try {
-                    const player = document.getElementById('youtubePlayer');
-                    player.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
-                    player.contentWindow.postMessage('{"event":"command","func":"setVolume","args":[100]}', '*');
-                    console.log("Unmute command dikirim");
-                } catch(e) {
-                    console.log("Error unmute:", e);
-                }
-                
-                // Trick 2: Reload iframe tanpa muted
-                setTimeout(() => {
-                    const newIframe = document.createElement('iframe');
-                    newIframe.id = 'youtubePlayer';
-                    newIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&showinfo=0`;
-                    newIframe.style.cssText = iframe.style.cssText;
-                    newIframe.allow = iframe.allow;
-                    
-                    // Ganti iframe lama
-                    iframe.parentNode.replaceChild(newIframe, iframe);
-                    console.log("Iframe direload tanpa mute");
-                }, 500);
+            function onPlayerReady(event) {
+                console.log("YouTube Player siap");
+                // Video sudah dimuat, tapi belum diputar
             }
             
-            // Saat user klik DI MANA SAJA, aktifkan suara
-            document.addEventListener('click', playWithSound);
-            document.addEventListener('touchstart', playWithSound);
+            function onPlayerStateChange(event) {
+                if (event.data === YT.PlayerState.PLAYING) {
+                    console.log("Video sedang diputar");
+                    isPlaying = true;
+                    updateButton();
+                } else if (event.data === YT.PlayerState.PAUSED) {
+                    console.log("Video dijeda");
+                    isPlaying = false;
+                    updateButton();
+                }
+            }
             
-            // Juga coba unmute otomatis setelah 2 detik (mungkin berhasil di beberapa browser)
-            setTimeout(playWithSound, 2000);
+            // Fungsi untuk mulai mainkan video dengan suara
+            function startVideoWithSound() {
+                if (!player) return;
+                
+                console.log("Memulai video dengan suara...");
+                
+                // 1. Unmute video
+                player.unMute();
+                
+                // 2. Set volume ke 100%
+                player.setVolume(100);
+                
+                // 3. Play video
+                player.playVideo();
+                
+                // 4. Update tombol
+                startButton.innerHTML = '<span style="font-size: 1.5rem;">🔊</span><span class="button-text">MUSIK SEDANG BERMAIN</span>';
+                startButton.classList.add('playing');
+                startButton.disabled = true;
+                
+                // 5. Otomatis enable tombol lagi setelah 3 detik
+                setTimeout(() => {
+                    startButton.disabled = false;
+                }, 3000);
+                
+                console.log("Video diputar dengan suara!");
+            }
+            
+            // Fungsi update tombol
+            function updateButton() {
+                if (isPlaying) {
+                    startButton.innerHTML = '<span style="font-size: 1.5rem;">⏸️</span><span class="button-text">JEDA MUSIK</span>';
+                    startButton.classList.add('playing');
+                } else {
+                    startButton.innerHTML = '<span style="font-size: 1.5rem;">▶️</span><span class="button-text">PUTAR MUSIK & VIDEO</span>';
+                    startButton.classList.remove('playing');
+                }
+            }
+            
+            // Event listener untuk tombol
+            startButton.addEventListener('click', function() {
+                if (!player) {
+                    console.log("Player belum siap, mencoba lagi...");
+                    return;
+                }
+                
+                if (!isPlaying) {
+                    startVideoWithSound();
+                } else {
+                    // Jika sudah playing, pause video
+                    player.pauseVideo();
+                    isPlaying = false;
+                    updateButton();
+                }
+            });
+            
+            // Fallback: Jika YouTube API gagal, gunakan iframe biasa
+            setTimeout(() => {
+                if (!player) {
+                    console.log("YouTube API gagal, gunakan iframe biasa");
+                    
+                    // Buat iframe biasa
+                    const iframe = document.createElement('iframe');
+                    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=0&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&modestbranding=1&rel=0`;
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.border = 'none';
+                    iframe.allow = 'autoplay; encrypted-media';
+                    iframe.allowFullscreen = true;
+                    
+                    youtubeDiv.appendChild(iframe);
+                    
+                    // Update fungsi tombol untuk iframe biasa
+                    startButton.addEventListener('click', function() {
+                        if (!isPlaying) {
+                            // Coba unmute dan play
+                            try {
+                                iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                                
+                                startButton.innerHTML = '<span style="font-size: 1.5rem;">🔊</span><span class="button-text">MUSIK SEDANG BERMAIN</span>';
+                                startButton.classList.add('playing');
+                                isPlaying = true;
+                            } catch(e) {
+                                console.log("Error:", e);
+                                alert("Klik tombol play di video YouTube yang muncul");
+                            }
+                        }
+                    });
+                }
+            }, 3000);
         });
     </script>
 </body>
