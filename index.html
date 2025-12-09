@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesan Sayang dari Febri</title>
     <style>
-        /* CSS sama seperti di atas */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             color: #333;
             min-height: 100vh;
             display: flex;
@@ -17,93 +21,78 @@
             padding: 20px;
             background: #000;
             position: relative;
-            overflow: hidden;
         }
-        .video-background {
+        
+        /* Video background */
+        #videoBackground {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: -1; background: #000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
         }
-        #bgVideo {
-            width: 100vw; height: 100vh;
-            object-fit: cover; opacity: 0.25;
-            min-width: 100%; min-height: 100%;
-        }
+        
+        /* Konten pesan */
         .container {
-            max-width: 800px;
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 60px 50px;
-            border-radius: 20px;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             text-align: center;
-            line-height: 1.8;
-            position: relative;
-            z-index: 1;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
         }
-        .message p { margin-bottom: 35px; font-size: 1.4rem; color: #444; }
-        .signature { color: #e91e63; font-weight: bold; font-size: 1.7rem; margin-top: 40px; padding-top: 25px; border-top: 3px solid rgba(233, 30, 99, 0.3); }
-        .heart { color: #e91e63; display: inline-block; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        
+        .message p {
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+        
+        .signature {
+            color: #e91e63;
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
     </style>
 </head>
 <body>
-    <!-- VIDEO LOCAL - PASTI JALAN DAN ADA SUARA -->
-    <div class="video-background">
-        <video id="bgVideo" autoplay loop muted playsinline>
-            <!-- Ganti dengan video musik lokal/cloud Anda -->
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-a-girl-blowing-a-wish-4326-large.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
+    <!-- Video YouTube langsung -->
+    <iframe 
+        id="videoBackground"
+        src="https://www.youtube.com/embed/HEAn4FqXFY4?autoplay=1&mute=0&loop=1&playlist=HEAn4FqXFY4&controls=0&showinfo=0"
+        frameborder="0"
+        allow="autoplay; encrypted-media">
+    </iframe>
     
     <!-- Konten pesan -->
     <div class="container">
         <div class="message">
             <p>Sayang, aku tahu UAS bikin kamu cemas, tapi aku percaya kamu jauh lebih kuat dari yang kamu pikirkan. Kamu sudah belajar, kamu sudah berusaha, dan itu sudah cukup untuk membuatmu melangkah dengan tenang.</p>
-            <p>Nggak apa-apa kalau kamu merasa belum siap, yang penting kamu mau maju pelan-pelan. Kamu nggak sendirian. Kamu pasti bisa, cintaku. <span class="heart">🤍✨</span></p>
+            <p>Nggak apa-apa kalau kamu merasa belum siap, yang penting kamu mau maju pelan-pelan. Kamu nggak sendirian. Kamu pasti bisa, cintaku. 🤍✨</p>
             <p class="signature">With love - Febri</p>
         </div>
     </div>
 
     <script>
-        // VIDEO LOCAL - 100% BERHASIL AUTOPLAY DENGAN SUARA
-        document.addEventListener('DOMContentLoaded', function() {
-            const video = document.getElementById('bgVideo');
-            
-            // Pastikan autoplay berhasil
-            video.play().then(() => {
-                console.log("Video local berhasil diputar!");
-                
-                // Unmute setelah play berhasil
-                setTimeout(() => {
-                    video.muted = false;
-                    video.volume = 0.7;
-                    console.log("Video di-unmute, volume 70%");
-                }, 1000);
-            }).catch(error => {
-                console.log("Autoplay gagal:", error);
-                
-                // Fallback: Mute dulu, play, lalu unmute
-                video.muted = true;
-                video.play().then(() => {
-                    console.log("Video diputar (muted)");
-                    setTimeout(() => {
-                        video.muted = false;
-                        video.volume = 0.7;
-                        console.log("Sekarang unmuted!");
-                    }, 500);
-                });
-            });
-            
-            // Pastikan video loop
-            video.loop = true;
-            
-            // Volume control
-            video.volume = 0.7;
-        });
+        // Simple script - video langsung main
+        console.log("Video YouTube langsung dimainkan...");
+        
+        // Coba unmute setelah beberapa detik
+        setTimeout(() => {
+            try {
+                const iframe = document.getElementById('videoBackground');
+                // Kirim command unmute ke YouTube player
+                iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                console.log("Mencoba unmute video...");
+            } catch(e) {
+                console.log("Browser mungkin block suara otomatis");
+            }
+        }, 2000);
     </script>
 </body>
 </html>
