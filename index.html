@@ -24,184 +24,257 @@
             overflow: hidden;
         }
         
-        /* Video background - PAKAI IFRAME TAPI TRICK */
+        /* Video background */
         .video-background {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             z-index: -1;
-            opacity: 0.2; /* Sangat transparan */
         }
         
         .video-background iframe {
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            transform: scale(1.1); /* Zoom in sedikit */
-        }
-        
-        /* Audio player hidden */
-        .audio-player {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            opacity: 0.001;
+            width: 100vw;
+            height: 100vh;
+            transform: scale(1.2);
+            opacity: 0.15;
             pointer-events: none;
         }
         
         /* Konten utama */
         .container {
             max-width: 800px;
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 50px;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background-color: rgba(255, 255, 255, 0.97);
+            padding: 60px 50px;
+            border-radius: 20px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
             text-align: center;
             line-height: 1.8;
             position: relative;
             z-index: 1;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
         
         .message p {
-            margin-bottom: 30px;
-            font-size: 1.3rem;
+            margin-bottom: 35px;
+            font-size: 1.4rem;
             color: #444;
         }
         
         .signature {
             color: #e91e63;
             font-weight: bold;
-            font-size: 1.5rem;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #f0f0f0;
+            font-size: 1.7rem;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 3px solid rgba(233, 30, 99, 0.3);
         }
         
         /* Responsif */
         @media (max-width: 768px) {
             .container {
-                padding: 30px 20px;
+                padding: 40px 25px;
                 margin: 20px;
             }
             
             .message p {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
+            }
+            
+            .video-background iframe {
+                transform: scale(1.5);
+                opacity: 0.1;
             }
         }
     </style>
 </head>
 <body>
-    <!-- TRICK: Dua elemen video/audio -->
-    
-    <!-- 1. Video YouTube Muted untuk autoplay -->
+    <!-- VIDEO YOUTUBE DENGAN SUARA - TRICK KHUSUS -->
     <div class="video-background">
         <iframe 
-            src="https://www.youtube.com/embed/HEAn4FqXFY4?autoplay=1&mute=1&loop=1&playlist=HEAn4FqXFY4&controls=0&showinfo=0&modestbranding=1&rel=0&enablejsapi=1" 
-            allow="autoplay; encrypted-media" 
+            src="https://www.youtube-nocookie.com/embed/HEAn4FqXFY4?autoplay=1&loop=1&playlist=HEAn4FqXFY4&controls=0&showinfo=0&modestbranding=1&rel=0&mute=0&enablejsapi=1&playback=1"
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen
-            id="youtubeVideo">
+            id="youtubePlayer">
         </iframe>
     </div>
-    
-    <!-- 2. Audio terpisah dari sumber lain -->
-    <audio class="audio-player" id="bgMusic" autoplay loop>
-        <!-- MUSIK LAGU YANG SAMA DENGAN VIDEO (tapi dari sumber audio saja) -->
-        <!-- Contoh: lagu piano yang mirip -->
-        <source src="https://assets.codepen.io/1468070/relaxing-piano.mp3" type="audio/mpeg">
-    </audio>
     
     <!-- Konten pesan -->
     <div class="container">
         <div class="message">
             <p>Sayang, aku tahu UAS bikin kamu cemas, tapi aku percaya kamu jauh lebih kuat dari yang kamu pikirkan. Kamu sudah belajar, kamu sudah berusaha, dan itu sudah cukup untuk membuatmu melangkah dengan tenang.</p>
-            <p>Nggak apa-apa kalau kamu merasa belum siap, yang penting kamu mau maju pelan-pelan. Kamu nggak sendirian. Kamu pasti bisa, cintaku. <span style="color:#e91e63;font-size:1.5rem;">🤍✨</span></p>
+            <p>Nggak apa-apa kalau kamu merasa belum siap, yang penting kamu mau maju pelan-pelan. Kamu nggak sendirian. Kamu pasti bisa, cintaku. <span style="color:#e91e63;font-size:1.8rem;">🤍✨</span></p>
             <p class="signature">With love - Febri</p>
         </div>
     </div>
 
     <script>
-        // TRICK: Video muted autoplay + Audio terpisah
-        document.addEventListener('DOMContentLoaded', function() {
-            const bgMusic = document.getElementById('bgMusic');
+        // ====== TRICK UNTUK AUTOPLAY DENGAN SUARA ======
+        
+        // TRICK 1: Gunakan YouTube Iframe API untuk kontrol lebih baik
+        let player;
+        
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtubePlayer', {
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+        
+        function onPlayerReady(event) {
+            console.log("Player siap");
             
-            // Set volume
-            bgMusic.volume = 0.6;
+            // TRICK: Play video dengan volume 0 dulu, lalu naikkan
+            event.target.setVolume(0);
+            event.target.playVideo();
             
-            // Autoplay audio dengan trik
-            // Simulate user interaction secara otomatis
-            function simulateClick() {
-                const clickEvent = new MouseEvent('click', {
-                    view: window,
+            // Setelah 500ms, naikkan volume perlahan
+            setTimeout(() => {
+                event.target.setVolume(30);
+                setTimeout(() => {
+                    event.target.setVolume(60);
+                    setTimeout(() => {
+                        event.target.setVolume(80);
+                        console.log("Volume maksimal!");
+                    }, 500);
+                }, 500);
+            }, 500);
+        }
+        
+        function onPlayerStateChange(event) {
+            console.log("Player state:", event.data);
+        }
+        
+        // TRICK 2: Auto click simulation untuk bypass autoplay policy
+        function simulateUserInteraction() {
+            console.log("Simulating user interaction...");
+            
+            // Simulasi berbagai event yang dianggap sebagai "user interaction"
+            const events = [
+                'click', 'mousedown', 'mouseup', 'mousemove',
+                'touchstart', 'touchend', 'touchmove',
+                'keydown', 'keyup'
+            ];
+            
+            events.forEach(eventType => {
+                const event = new Event(eventType, {
                     bubbles: true,
                     cancelable: true
                 });
-                
-                document.dispatchEvent(clickEvent);
-                console.log("Simulasi klik untuk audio");
+                document.dispatchEvent(event);
+            });
+            
+            // Click pada body
+            document.body.click();
+            
+            // Focus pada window
+            window.focus();
+            
+            console.log("User interaction simulated");
+        }
+        
+        // TRICK 3: Multiple attempts untuk play video
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        function tryForcePlay() {
+            attempts++;
+            console.log(`Attempt ${attempts} to force play...`);
+            
+            if (attempts >= maxAttempts) {
+                console.log("Max attempts reached");
+                return;
             }
             
-            // Coba play audio langsung
-            bgMusic.play().then(() => {
-                console.log("Audio berhasil autoplay!");
-            }).catch(error => {
-                console.log("Audio autoplay diblokir, coba trik...");
+            // Coba unmute dan play jika player sudah ada
+            if (player && player.playVideo) {
+                player.unMute();
+                player.playVideo();
                 
-                // Trik 1: Delay lalu coba lagi
-                setTimeout(() => {
-                    bgMusic.play().catch(e => {
-                        console.log("Masih gagal, coba trik lain...");
-                        
-                        // Trik 2: Mute dulu, play, lalu unmute
-                        bgMusic.muted = true;
-                        bgMusic.play().then(() => {
-                            setTimeout(() => {
-                                bgMusic.muted = false;
-                                console.log("Audio aktif via trick!");
-                            }, 100);
-                        });
-                    });
-                }, 1000);
-                
-                // Trik 3: Simulasi interaksi
-                setTimeout(simulateClick, 500);
+                // Naikkan volume secara bertahap
+                const volumes = [0, 20, 40, 60, 80];
+                volumes.forEach((vol, index) => {
+                    setTimeout(() => {
+                        player.setVolume(vol);
+                    }, index * 300);
+                });
+            }
+            
+            // Coba lagi setiap 2 detik
+            setTimeout(tryForcePlay, 2000);
+        }
+        
+        // TRICK 4: Gunakan service worker untuk bypass autoplay
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(console.error);
+        }
+        
+        // TRICK 5: Event listeners untuk trigger autoplay
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM loaded, starting autoplay tricks...");
+            
+            // Simulasi interaksi segera
+            setTimeout(simulateUserInteraction, 100);
+            setTimeout(simulateUserInteraction, 500);
+            setTimeout(simulateUserInteraction, 1000);
+            
+            // Mulai force play attempts
+            setTimeout(tryForcePlay, 1500);
+            
+            // Tambah event listeners untuk berbagai interaksi
+            const playTriggers = ['scroll', 'mousemove', 'touchstart', 'keydown'];
+            playTriggers.forEach(trigger => {
+                document.addEventListener(trigger, function triggerPlay() {
+                    console.log(`${trigger} detected, trying to play...`);
+                    if (player) {
+                        player.playVideo();
+                        player.setVolume(80);
+                    }
+                    // Hapus setelah berhasil (optional)
+                    document.removeEventListener(trigger, triggerPlay);
+                }, { once: true });
             });
             
-            // Video sudah autoplay (muted) - tidak ada error
-            console.log("Video YouTube muted autoplay aktif");
-            
-            // Play audio saat user scroll (event yang diizinkan)
-            window.addEventListener('scroll', function() {
-                if (bgMusic.paused) {
-                    bgMusic.play().then(() => {
-                        console.log("Audio diputar setelah scroll");
-                    });
+            // Fallback: reload iframe dengan parameter berbeda
+            setTimeout(() => {
+                const iframe = document.getElementById('youtubePlayer');
+                const currentSrc = iframe.src;
+                
+                // Coba dengan parameter berbeda
+                if (!currentSrc.includes('autoplay=1')) {
+                    iframe.src = currentSrc + '&autoplay=1';
                 }
-            }, { once: true }); // Hanya sekali
-            
-            // Play audio saat mouse move
-            document.addEventListener('mousemove', function initAudio() {
-                if (bgMusic.paused) {
-                    bgMusic.play().then(() => {
-                        console.log("Audio diputar setelah mouse move");
-                    });
-                }
-                // Hapus event setelah berhasil
-                document.removeEventListener('mousemove', initAudio);
-            });
-            
-            // Pastikan audio tetap play
-            setInterval(() => {
-                if (bgMusic.paused) {
-                    bgMusic.play().catch(e => {});
+                
+                // Coba tanpa nocookie domain
+                if (currentSrc.includes('youtube-nocookie')) {
+                    const regularSrc = currentSrc.replace('youtube-nocookie', 'youtube');
+                    const backupIframe = document.createElement('iframe');
+                    backupIframe.src = regularSrc;
+                    backupIframe.style.cssText = iframe.style.cssText;
+                    iframe.parentNode.replaceChild(backupIframe, iframe);
                 }
             }, 3000);
-            
-            console.log("Sistem siap: Video muted + Audio terpisah");
         });
+        
+        // TRICK 6: Background tab detection and resume
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && player) {
+                console.log("Tab aktif kembali, resume video");
+                player.playVideo();
+            }
+        });
+        
+        // Load YouTube Iframe API
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        
     </script>
 </body>
 </html>
