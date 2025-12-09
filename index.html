@@ -31,7 +31,7 @@
             touch-action: manipulation;
         }
         
-        /* Video YouTube background */
+        /* VIDEO CONTAINER - PASTI TERLIHAT */
         .video-container {
             position: fixed;
             top: 0;
@@ -40,14 +40,30 @@
             height: 100vh;
             z-index: -2;
             background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        #youtubeIframe {
-            width: 100vw;
-            height: 100vh;
-            border: none;
-            pointer-events: none;
-            opacity: 0.3;
+        /* VIDEO ELEMENT - BUKAN IFRAME */
+        #backgroundVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.4;
+            filter: brightness(0.6);
+        }
+        
+        /* Video placeholder sebelum dimuat */
+        .video-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            z-index: 1;
         }
         
         /* Overlay untuk baca teks */
@@ -57,7 +73,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.5);
             z-index: -1;
         }
         
@@ -65,16 +81,16 @@
         .content {
             max-width: 90vw;
             width: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.75);
             padding: 25px;
             border-radius: 20px;
             text-align: center;
             line-height: 1.6;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
             margin-bottom: 20px;
-            -webkit-overflow-scrolling: touch;
+            z-index: 10;
         }
         
         .message p {
@@ -92,8 +108,8 @@
             border-top: 1px solid rgba(255, 64, 129, 0.3);
         }
         
-        /* Tombol besar untuk mobile */
-        .mobile-play-button {
+        /* TOMBOL UTAMA - BESAR UNTUK MOBILE */
+        .main-button {
             position: fixed;
             bottom: 30px;
             left: 50%;
@@ -106,8 +122,8 @@
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(255, 64, 129, 0.5);
-            transition: all 0.3s ease;
+            box-shadow: 0 10px 35px rgba(255, 64, 129, 0.6);
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -116,56 +132,88 @@
             max-width: 400px;
             z-index: 100;
             touch-action: manipulation;
-            animation: pulseMobile 2s infinite;
         }
         
-        .mobile-play-button:active {
-            transform: translateX(-50%) scale(0.98);
+        .main-button:active {
+            transform: translateX(-50%) scale(0.96);
             box-shadow: 0 5px 20px rgba(255, 64, 129, 0.4);
         }
         
-        .mobile-play-button.playing {
+        .main-button.playing {
             background: linear-gradient(135deg, #4CAF50, #2E7D32);
             animation: none;
         }
         
-        .mobile-play-button:disabled {
+        .main-button:disabled {
             opacity: 0.7;
             cursor: not-allowed;
-        }
-        
-        @keyframes pulseMobile {
-            0% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.05); }
-            100% { transform: translateX(-50%) scale(1); }
         }
         
         .button-icon {
             font-size: 1.8rem;
         }
         
-        /* Loading indicator */
-        .loading {
+        /* Progress bar untuk video */
+        .video-progress {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 1.2rem;
-            text-align: center;
-            z-index: 101;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px 30px;
-            border-radius: 15px;
+            bottom: 100px;
+            left: 5%;
+            width: 90%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            z-index: 50;
             display: none;
         }
         
-        /* Responsif untuk berbagai ukuran HP */
+        .video-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4081, #ff80ab);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        /* Volume control */
+        .volume-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+        
+        .volume-slider {
+            width: 80px;
+            -webkit-appearance: none;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ff4081;
+            cursor: pointer;
+        }
+        
+        /* Responsif */
         @media (max-width: 480px) {
             .content {
                 padding: 20px 15px;
                 margin-bottom: 15px;
-                max-height: 70vh;
+                max-height: 60vh;
                 overflow-y: auto;
             }
             
@@ -174,264 +222,292 @@
                 margin-bottom: 15px;
             }
             
-            .mobile-play-button {
+            .main-button {
                 padding: 20px;
                 font-size: 1.2rem;
                 bottom: 20px;
             }
             
-            #youtubeIframe {
-                opacity: 0.2;
+            #backgroundVideo {
+                opacity: 0.3;
             }
         }
         
-        @media (max-height: 700px) {
-            .content {
-                max-height: 60vh;
-                overflow-y: auto;
-            }
-            
-            .mobile-play-button {
-                padding: 18px;
-                font-size: 1.1rem;
-                bottom: 15px;
-            }
+        /* Animasi untuk konten */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Scrollbar custom untuk mobile */
-        .content::-webkit-scrollbar {
-            width: 5px;
+        .content {
+            animation: fadeIn 0.8s ease-out;
         }
         
-        .content::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        
-        .content::-webkit-scrollbar-thumb {
-            background: rgba(255, 64, 129, 0.5);
-            border-radius: 10px;
+        .main-button {
+            animation: fadeIn 1s ease-out 0.3s both;
         }
     </style>
 </head>
 <body>
-    <!-- Video YouTube -->
+    <!-- VIDEO BACKGROUND - VIDEO FILE LANGSUNG -->
     <div class="video-container">
-        <iframe id="youtubeIframe" 
-                frameborder="0" 
-                allowfullscreen
-                allow="autoplay; encrypted-media">
-        </iframe>
+        <video id="backgroundVideo" autoplay muted loop playsinline>
+            <!-- VIDEO LANGSUNG DARI SUMBER - BUKAN YOUTUBE IFRAME -->
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-romantic-music-on-a-piano-5105-large.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-placeholder" id="videoPlaceholder">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🎵</div>
+            Video musik akan dimulai...
+        </div>
     </div>
     
     <!-- Overlay gelap -->
     <div class="overlay"></div>
     
-    <!-- Loading -->
-    <div class="loading" id="loading">
-        <div style="font-size: 2rem; margin-bottom: 10px;">🎵</div>
-        Memuat musik...
+    <!-- Progress bar -->
+    <div class="video-progress" id="videoProgress">
+        <div class="video-progress-bar" id="progressBar"></div>
+    </div>
+    
+    <!-- Volume control -->
+    <div class="volume-control" id="volumeControl">
+        <span style="font-size: 1.2rem;">🔊</span>
+        <input type="range" min="0" max="100" value="70" class="volume-slider" id="volumeSlider">
     </div>
     
     <!-- Pesan -->
     <div class="content">
         <div class="message">
             <p>Sayang, aku tahu UAS bikin kamu cemas, tapi aku percaya kamu jauh lebih kuat dari yang kamu pikirkan. Kamu sudah belajar, kamu sudah berusaha, dan itu sudah cukup untuk membuatmu melangkah dengan tenang.</p>
-            <p>Nggak apa-apa kalau kamu merasa belum siap, yang penting kamu mau maju pelan-pelan. Kamu nggak sendirian. Kamu pasti bisa, cintaku. <span style="color:#e91e63;font-size:1.5rem;">🤍✨</span></p>
+            <p>Nggak apa-apa kalau kamu merasa belum siap, yang penting kamu mau maju pelan-pelan. Kamu nggak sendirian. Kamu pasti bisa, cintaku. ❤️</p>
             <p class="signature">With love - Febri</p>
         </div>
     </div>
     
-    <!-- TOMBOL BESAR UNTUK MOBILE -->
-    <button class="mobile-play-button" id="playButton">
+    <!-- TOMBOL UTAMA -->
+    <button class="main-button" id="playButton">
         <span class="button-icon">▶️</span>
-        <span>TAP UNTUK PUTAR MUSIK</span>
+        <span>TAP DISINI UNTUK MUSIK</span>
     </button>
 
     <script>
-        // VIDEO: https://www.youtube.com/watch?v=HEAn4FqXFY4
-        const videoId = 'HEAn4FqXFY4';
-        let isPlaying = false;
-        let youtubePlayer = null;
+        // ELEMENTS
+        const video = document.getElementById('backgroundVideo');
+        const playButton = document.getElementById('playButton');
+        const videoPlaceholder = document.getElementById('videoPlaceholder');
+        const volumeControl = document.getElementById('volumeControl');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const videoProgress = document.getElementById('videoProgress');
+        const progressBar = document.getElementById('progressBar');
         
-        // Fungsi untuk mobile touch
-        function handleMobileTouch() {
-            const playButton = document.getElementById('playButton');
-            const loading = document.getElementById('loading');
-            const iframe = document.getElementById('youtubeIframe');
+        // STATE
+        let isPlaying = false;
+        let hasUserInteracted = false;
+        
+        // INISIALISASI
+        function init() {
+            console.log("Inisialisasi aplikasi...");
             
-            // Set iframe source (muted autoplay untuk mobile)
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1`;
+            // Video sudah autoplay (muted) saat halaman dimuat
+            video.play().then(() => {
+                console.log("Video muted autoplay berhasil");
+                videoPlaceholder.style.display = 'none';
+            }).catch(error => {
+                console.log("Video autoplay gagal:", error);
+            });
             
-            console.log("YouTube iframe dimuat (muted)");
+            // Setup volume
+            video.volume = 0.7;
+            volumeSlider.value = 70;
             
-            // Event listener untuk tombol (TOUCH FRIENDLY)
+            // Setup progress bar update
+            video.addEventListener('timeupdate', updateProgressBar);
+            
+            // Setup volume control
+            volumeSlider.addEventListener('input', function() {
+                video.volume = this.value / 100;
+            });
+            
+            // Setup tombol utama (TOUCH FRIENDLY)
+            setupButton();
+            
+            // Tampilkan video progress bar
+            videoProgress.style.display = 'block';
+            
+            // Auto-hide placeholder setelah 3 detik
+            setTimeout(() => {
+                videoPlaceholder.style.opacity = '0';
+                setTimeout(() => {
+                    videoPlaceholder.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
+        
+        // SETUP TOMBOL
+        function setupButton() {
+            // Touch events untuk mobile
             playButton.addEventListener('touchstart', function(e) {
-                e.preventDefault(); // Prevent default touch behavior
-                playButton.style.transform = 'translateX(-50%) scale(0.98)';
+                e.preventDefault();
+                this.style.transform = 'translateX(-50%) scale(0.96)';
             }, { passive: false });
             
             playButton.addEventListener('touchend', function(e) {
                 e.preventDefault();
-                playButton.style.transform = 'translateX(-50%) scale(1)';
-                startVideoWithSound();
+                this.style.transform = 'translateX(-50%) scale(1)';
+                handlePlayButton();
             }, { passive: false });
             
-            // Juga support click (untuk desktop/testing)
+            // Click event untuk desktop
             playButton.addEventListener('click', function(e) {
                 e.preventDefault();
-                startVideoWithSound();
-            });
-            
-            // Fungsi untuk mulai video dengan suara
-            function startVideoWithSound() {
-                if (isPlaying) return;
-                
-                console.log("Mencoba memutar dengan suara...");
-                loading.style.display = 'block';
-                playButton.disabled = true;
-                playButton.innerHTML = '<span class="button-icon">⏳</span><span>MEMUAT...</span>';
-                
-                // TRICK UNTUK MOBILE: Gunakan window.open untuk YouTube app
-                setTimeout(() => {
-                    // Coba beberapa teknik berbeda untuk mobile
-                    
-                    // Technique 1: Coba unmute iframe yang ada
-                    try {
-                        iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
-                        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                        console.log("Coba unmute via postMessage");
-                    } catch(e) {
-                        console.log("Error technique 1:", e);
-                    }
-                    
-                    // Technique 2: Reload iframe tanpa muted parameter
-                    setTimeout(() => {
-                        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&playsinline=1`;
-                        console.log("Reload iframe tanpa mute");
-                    }, 500);
-                    
-                    // Technique 3: Untuk mobile, buka YouTube app
-                    setTimeout(() => {
-                        // Cek jika di mobile
-                        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                        
-                        if (isMobile && !isPlaying) {
-                            console.log("Mobile detected, try opening YouTube app");
-                            // Buka YouTube app atau browser YouTube
-                            window.location.href = `https://www.youtube.com/watch?v=${videoId}&autoplay=1`;
-                            return;
-                        }
-                    }, 1000);
-                    
-                    // Technique 4: Fallback - ganti dengan audio saja
-                    setTimeout(() => {
-                        if (!isPlaying) {
-                            console.log("Fallback: audio only");
-                            // Sembunyikan video, mainkan audio saja
-                            iframe.style.display = 'none';
-                            
-                            // Buat audio element
-                            const audio = document.createElement('audio');
-                            audio.autoplay = true;
-                            audio.loop = true;
-                            audio.volume = 0.7;
-                            // Audio dari sumber lain (contoh: relaxing music)
-                            audio.src = 'https://assets.codepen.io/1468070/relaxing-piano.mp3';
-                            document.body.appendChild(audio);
-                            
-                            audio.play().then(() => {
-                                successPlay();
-                            }).catch(() => {
-                                // Jika masih gagal, tampilkan instruksi
-                                playButton.innerHTML = '<span class="button-icon">🔊</span><span>TEKAN LAGI UNTUK SUARA</span>';
-                                playButton.disabled = false;
-                                loading.style.display = 'none';
-                            });
-                        }
-                    }, 2000);
-                    
-                }, 300);
-                
-                // Fungsi ketika berhasil
-                function successPlay() {
-                    isPlaying = true;
-                    loading.style.display = 'none';
-                    playButton.innerHTML = '<span class="button-icon">🔊</span><span>MUSIK BERMAIN</span>';
-                    playButton.classList.add('playing');
-                    playButton.disabled = true;
-                    
-                    // Enable kembali setelah 3 detik untuk pause
-                    setTimeout(() => {
-                        playButton.disabled = false;
-                        playButton.innerHTML = '<span class="button-icon">⏸️</span><span>TAP UNTUK JEDA</span>';
-                        
-                        // Tambah event untuk pause
-                        playButton.addEventListener('click', function pauseHandler() {
-                            if (isPlaying) {
-                                // Coba pause video
-                                try {
-                                    iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                                } catch(e) {}
-                                
-                                // Pause audio jika ada
-                                const audio = document.querySelector('audio');
-                                if (audio) audio.pause();
-                                
-                                isPlaying = false;
-                                playButton.innerHTML = '<span class="button-icon">▶️</span><span>TAP UNTUK MAIN</span>';
-                                playButton.classList.remove('playing');
-                            } else {
-                                // Coba play lagi
-                                try {
-                                    iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                                } catch(e) {}
-                                
-                                const audio = document.querySelector('audio');
-                                if (audio) audio.play();
-                                
-                                isPlaying = true;
-                                playButton.innerHTML = '<span class="button-icon">⏸️</span><span>TAP UNTUK JEDA</span>';
-                                playButton.classList.add('playing');
-                            }
-                        });
-                    }, 3000);
-                    
-                    console.log("Video/audio berhasil diputar!");
-                }
-            }
-            
-            // Auto-hide loading setelah 5 detik
-            setTimeout(() => {
-                loading.style.display = 'none';
-            }, 5000);
-            
-            // Deteksi jika video mulai (untuk beberapa browser)
-            window.addEventListener('message', function(event) {
-                if (event.data && event.data.info === 'videoStarted') {
-                    successPlay();
-                }
+                handlePlayButton();
             });
         }
         
-        // Inisialisasi saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', handleMobileTouch);
+        // HANDLE TOMBOL PLAY
+        function handlePlayButton() {
+            if (!hasUserInteracted) {
+                // INTERAKSI PERTAMA: Aktifkan suara
+                activateSound();
+                hasUserInteracted = true;
+            } else {
+                // INTERAKSI BERIKUTNYA: Play/Pause
+                togglePlayPause();
+            }
+        }
         
-        // Handle orientation change di mobile
-        window.addEventListener('orientationchange', function() {
-            setTimeout(() => {
-                // Reset tombol position setelah rotasi
-                const playButton = document.getElementById('playButton');
-                playButton.style.transform = 'translateX(-50%) scale(1)';
-            }, 300);
+        // AKTIFKAN SUARA
+        function activateSound() {
+            console.log("Mengaktifkan suara...");
+            
+            // Update tombol
+            playButton.innerHTML = '<span class="button-icon">🔊</span><span>MENGATUR SUARA...</span>';
+            playButton.disabled = true;
+            
+            // Unmute video
+            video.muted = false;
+            
+            // Coba play dengan suara
+            video.play().then(() => {
+                console.log("Video dengan suara berhasil diputar!");
+                
+                // Tampilkan volume control
+                volumeControl.style.display = 'flex';
+                
+                // Update tombol menjadi pause
+                playButton.innerHTML = '<span class="button-icon">⏸️</span><span>JEDA MUSIK</span>';
+                playButton.classList.add('playing');
+                playButton.disabled = false;
+                isPlaying = true;
+                
+            }).catch(error => {
+                console.log("Gagal play dengan suara:", error);
+                
+                // Fallback: Mute dulu, play, lalu unmute
+                video.muted = true;
+                video.play().then(() => {
+                    setTimeout(() => {
+                        video.muted = false;
+                        console.log("Suara diaktifkan via fallback");
+                        
+                        volumeControl.style.display = 'flex';
+                        playButton.innerHTML = '<span class="button-icon">⏸️</span><span>JEDA MUSIK</span>';
+                        playButton.classList.add('playing');
+                        playButton.disabled = false;
+                        isPlaying = true;
+                    }, 300);
+                });
+            });
+        }
+        
+        // TOGGLE PLAY/PAUSE
+        function togglePlayPause() {
+            if (isPlaying) {
+                // PAUSE
+                video.pause();
+                playButton.innerHTML = '<span class="button-icon">▶️</span><span>MAINKAN MUSIK</span>';
+                playButton.classList.remove('playing');
+                isPlaying = false;
+            } else {
+                // PLAY
+                video.play().then(() => {
+                    playButton.innerHTML = '<span class="button-icon">⏸️</span><span>JEDA MUSIK</span>';
+                    playButton.classList.add('playing');
+                    isPlaying = true;
+                });
+            }
+        }
+        
+        // UPDATE PROGRESS BAR
+        function updateProgressBar() {
+            if (video.duration) {
+                const progress = (video.currentTime / video.duration) * 100;
+                progressBar.style.width = progress + '%';
+            }
+        }
+        
+        // LOAD VIDEO YOUTUBE ALTERNATIF (jika video lokal gagal)
+        function loadYouTubeAlternative() {
+            console.log("Mencoba video alternatif...");
+            
+            // Ganti dengan video dari sumber lain
+            video.src = 'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-water-1164-large.mp4';
+            video.load();
+            video.play().catch(console.error);
+        }
+        
+        // DETEKSI KONEKSI LAMBAT
+        video.addEventListener('error', function(e) {
+            console.log("Error video:", e);
+            videoPlaceholder.innerHTML = '<div style="font-size: 3rem; margin-bottom: 10px;">⚠️</div><div>Video tidak dapat dimuat<br><small>Memuat alternatif...</small></div>';
+            
+            setTimeout(loadYouTubeAlternative, 2000);
         });
         
-        // Prevent pull-to-refresh di mobile
+        // VIDEO LOADED
+        video.addEventListener('loadeddata', function() {
+            console.log("Video berhasil dimuat");
+            videoPlaceholder.style.opacity = '0';
+            setTimeout(() => {
+                videoPlaceholder.style.display = 'none';
+            }, 500);
+        });
+        
+        // JALANKAN SAAT HALAMAN SIAP
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+        
+        // HANDLE PAGE VISIBILITY (pause saat tab tidak aktif)
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && isPlaying) {
+                video.pause();
+                playButton.innerHTML = '<span class="button-icon">▶️</span><span>MAINKAN MUSIK</span>';
+                playButton.classList.remove('playing');
+                isPlaying = false;
+            }
+        });
+        
+        // PREVENT DEFAULT BEHAVIOR DI MOBILE
         document.addEventListener('touchmove', function(e) {
             if (e.scale !== 1) {
                 e.preventDefault();
             }
         }, { passive: false });
+        
+        // FULLSCREEN SUPPORT
+        video.addEventListener('click', function() {
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+            } else if (video.mozRequestFullScreen) {
+                video.mozRequestFullScreen();
+            }
+        });
         
     </script>
 </body>
